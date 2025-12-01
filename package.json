@@ -1,0 +1,27 @@
+{
+  "name": "ci-dashboard",
+  "version": "1.0.0",
+  "description": "CI Dashboard",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+        "scan": "node src/scan.js",
+        "build:dashboard": "node src/generateDashboard.js"
+    },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GlueOps/ci-dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/GlueOps/ci-dashboard/issues"
+  },
+  "homepage": "https://github.com/GlueOps/ci-dashboard#readme",
+  "dependencies": {
+    "@octokit/auth-app": "^8.1.2",
+    "@octokit/core": "^7.0.6",
+    "@octokit/plugin-paginate-rest": "^14.0.0",
+    "@octokit/plugin-rest-endpoint-methods": "^17.0.0"
+  }
+}

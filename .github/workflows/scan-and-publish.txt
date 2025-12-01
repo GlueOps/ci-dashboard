@@ -1,0 +1,56 @@
+name: Scan orgs with GitHub App & publish dashboard
+
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *" # every 6 hours
+
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  pages: write
+  id-token: write
+
+
+concurrency:
+  group: app-scan
+  cancel-in-progress: false
+
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
+        with:
+          node-version: 22.21.1
+          cache: 'npm'
+          
+      - name: Install deps
+        run: |
+          npm install
+            
+      - name: Scan installations → dashboard/
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SCANNED_RUN_WINDOW_DAYS: 14
+          MAX_REPOS: ''
+        run: |
+          node src/scan.js
+          node src/generateDashboard.js
+            
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: dashboard
+          
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
